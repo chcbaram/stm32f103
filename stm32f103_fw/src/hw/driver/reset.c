@@ -18,7 +18,7 @@ bool resetInit(void)
 {
   bool ret = true;
 
-
+#if 0
   // 만약 Reset 핀이 눌렸다면
   //
   if (RCC->CSR & (1<<26))
@@ -29,6 +29,7 @@ bool resetInit(void)
   }
 
   rtcBackupRegWrite(1, 0);
+#endif
 
   return ret;
 }
