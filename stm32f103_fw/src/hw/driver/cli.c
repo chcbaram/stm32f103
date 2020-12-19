@@ -23,6 +23,8 @@
 #define CLI_KEY_HOME              0x31
 #define CLI_KEY_END               0x34
 
+#define CLI_PROMPT_STR            "cli# "
+
 
 enum
 {
@@ -54,9 +56,11 @@ typedef struct
   uint32_t log_baud;
   uint8_t  state;
 
-  uint8_t     line_i;
-  uint8_t     line_last;
-  uint8_t     line_count;
+  bool        hist_line_new;
+  int8_t      hist_line_i;
+  uint8_t     hist_line_last;
+  uint8_t     hist_line_count;
+
   cli_line_t  line_buf[CLI_LINE_HIS_MAX];
   cli_line_t  line;
 } cli_t;
@@ -70,8 +74,8 @@ cli_t   cli_node;
 static bool cliUpdate(cli_t *p_cli, uint8_t rx_data);
 static void cliLineClean(cli_t *p_cli);
 static void cliLineAdd(cli_t *p_cli);
-static void cliLineChange(cli_t *p_cli, int8_t dir);
-
+static void cliLineChange(cli_t *p_cli, int8_t key_up);
+static void cliShowPrompt(cli_t *p_cli);
 
 
 
@@ -82,10 +86,10 @@ bool cliInit(void)
   cli_node.is_log  = false;
   cli_node.state   = CLI_RX_IDLE;
 
-  cli_node.line_i     = 0;
-  cli_node.line_last  = 0;
-  cli_node.line_count = 0;
-
+  cli_node.hist_line_i     = 0;
+  cli_node.hist_line_last  = 0;
+  cli_node.hist_line_count = 0;
+  cli_node.hist_line_new   = false;
 
   cliLineClean(&cli_node);
 
@@ -132,16 +136,22 @@ void cliShowLog(cli_t *p_cli)
     uartPrintf(p_cli->log_ch, "Count   : %d\n", p_cli->line.count);
     uartPrintf(p_cli->log_ch, "buf_len : %d\n", p_cli->line.buf_len);
     uartPrintf(p_cli->log_ch, "buf     : %s\n", p_cli->line.buf);
-    uartPrintf(p_cli->log_ch, "line_i  : %d\n", p_cli->line_i);
-    uartPrintf(p_cli->log_ch, "line_lt : %d\n", p_cli->line_last);
-    uartPrintf(p_cli->log_ch, "line_c  : %d\n", p_cli->line_count);
+    uartPrintf(p_cli->log_ch, "line_i  : %d\n", p_cli->hist_line_i);
+    uartPrintf(p_cli->log_ch, "line_lt : %d\n", p_cli->hist_line_last);
+    uartPrintf(p_cli->log_ch, "line_c  : %d\n", p_cli->hist_line_count);
 
-    for (int i=0; i<p_cli->line_count; i++)
+    for (int i=0; i<p_cli->hist_line_count; i++)
     {
       uartPrintf(p_cli->log_ch, "buf %d   : %s\n", i, p_cli->line_buf[i].buf);
     }
     uartPrintf(p_cli->log_ch, "\n");
   }
+}
+
+void cliShowPrompt(cli_t *p_cli)
+{
+  uartPrintf(p_cli->ch, "\n\r");
+  uartPrintf(p_cli->ch, CLI_PROMPT_STR);
 }
 
 bool cliMain(void)
@@ -183,7 +193,7 @@ bool cliUpdate(cli_t *p_cli, uint8_t rx_data)
         line->count = 0;
         line->cursor = 0;
         line->buf[0] = 0;
-        uartPrintf(p_cli->ch, "\n\rcli# ");
+        cliShowPrompt(p_cli);
         break;
 
 
@@ -320,13 +330,13 @@ bool cliUpdate(cli_t *p_cli, uint8_t rx_data)
 
       if (rx_data == CLI_KEY_UP)
       {
-        cliLineChange(p_cli, -1);
+        cliLineChange(p_cli, true);
         uartPrintf(p_cli->ch, (char *)p_cli->line.buf);
       }
 
       if (rx_data == CLI_KEY_DOWN)
       {
-        cliLineChange(p_cli, 1);
+        cliLineChange(p_cli, false);
         uartPrintf(p_cli->ch, (char *)p_cli->line.buf);
       }
 
@@ -380,23 +390,24 @@ void cliLineClean(cli_t *p_cli)
 void cliLineAdd(cli_t *p_cli)
 {
 
-  p_cli->line_buf[p_cli->line_last] = p_cli->line;
+  p_cli->line_buf[p_cli->hist_line_last] = p_cli->line;
 
-  if (p_cli->line_count < CLI_LINE_HIS_MAX)
+  if (p_cli->hist_line_count < CLI_LINE_HIS_MAX)
   {
-    p_cli->line_count++;
+    p_cli->hist_line_count++;
   }
 
-  p_cli->line_last = (p_cli->line_last + 1) % CLI_LINE_HIS_MAX;
-  p_cli->line_i    = p_cli->line_last % p_cli->line_count;
+  p_cli->hist_line_i    = p_cli->hist_line_last;
+  p_cli->hist_line_last = (p_cli->hist_line_last + 1) % CLI_LINE_HIS_MAX;
+  p_cli->hist_line_new  = true;
 }
 
-void cliLineChange(cli_t *p_cli, int8_t dir)
+void cliLineChange(cli_t *p_cli, int8_t key_up)
 {
   uint8_t change_i;
 
 
-  if (p_cli->line_count == 0)
+  if (p_cli->hist_line_count == 0)
   {
     return;
   }
@@ -412,27 +423,25 @@ void cliLineChange(cli_t *p_cli, int8_t dir)
   }
 
 
-  if (dir > 0)
+  if (key_up == true)
   {
-    change_i = p_cli->line_i;
-    p_cli->line_i = (p_cli->line_i + 1) % p_cli->line_count;
+    if (p_cli->hist_line_new == true)
+    {
+      p_cli->hist_line_i = p_cli->hist_line_last;
+    }
+    p_cli->hist_line_i = (p_cli->hist_line_i + p_cli->hist_line_count - 1) % p_cli->hist_line_count;
+    change_i = p_cli->hist_line_i;
   }
   else
   {
-    if (p_cli->line_i > 0)
-    {
-      p_cli->line_i--;
-    }
-    else
-    {
-      p_cli->line_i = p_cli->line_count - 1;
-    }
-    change_i = p_cli->line_i;
+    p_cli->hist_line_i = (p_cli->hist_line_i + 1) % p_cli->hist_line_count;
+    change_i = p_cli->hist_line_i;
   }
 
   p_cli->line = p_cli->line_buf[change_i];
   p_cli->line.cursor = p_cli->line.count;
 
+  p_cli->hist_line_new = false;
 }
 
 
