@@ -10,6 +10,8 @@
 #include "cli.h"
 
 
+#ifdef _USE_HW_LED
+
 
 typedef struct
 {
@@ -124,4 +126,7 @@ void cliLed(cli_args_t *args)
     cliPrintf("led toggle ch[1~%d] time(ms)\n", LED_MAX_CH);
   }
 }
+#endif
+
+
 #endif

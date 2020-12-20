@@ -10,6 +10,8 @@
 
 
 
+#ifdef _USE_HW_RTC
+
 
 static RTC_HandleTypeDef hrtc;
 
@@ -81,3 +83,6 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
   /* USER CODE END RTC_MspDeInit 1 */
   }
 }
+
+
+#endif

@@ -10,6 +10,8 @@
 #include "rtc.h"
 
 
+#ifdef _USE_HW_RESET
+
 static uint32_t reset_count = 0;
 
 
@@ -38,3 +40,6 @@ uint32_t resetGetCount(void)
 {
   return reset_count;
 }
+
+
+#endif

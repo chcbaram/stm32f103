@@ -11,6 +11,9 @@
 #include "qbuffer.h"
 
 
+#ifdef _USE_HW_UART
+
+
 static bool is_open[UART_MAX_CH];
 
 static qbuffer_t qbuffer[UART_MAX_CH];
@@ -290,3 +293,6 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END USART1_MspDeInit 1 */
   }
 }
+
+
+#endif

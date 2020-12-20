@@ -9,6 +9,9 @@
 #include "flash.h"
 
 
+#ifdef _USE_HW_FLASH
+
+
 #define FLASH_SECTOR_MAX          64
 
 
@@ -170,3 +173,5 @@ bool flashInSector(uint16_t sector_num, uint32_t addr, uint32_t length)
   return ret;
 }
 
+
+#endif

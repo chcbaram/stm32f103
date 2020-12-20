@@ -9,7 +9,7 @@
 #include "cdc.h"
 
 
-
+#ifdef _USE_HW_CDC
 
 
 bool cdcInit(void)
@@ -19,3 +19,6 @@ bool cdcInit(void)
 
   return ret;
 }
+
+
+#endif
