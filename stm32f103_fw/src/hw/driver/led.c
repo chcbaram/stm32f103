@@ -7,6 +7,8 @@
 
 
 #include "led.h"
+#include "cli.h"
+
 
 
 typedef struct
@@ -22,6 +24,11 @@ led_tbl_t led_tbl[LED_MAX_CH] =
     {
         {GPIOB, GPIO_PIN_12, GPIO_PIN_RESET, GPIO_PIN_SET},
     };
+
+
+#ifdef _USE_HW_CLI
+static void cliLed(cli_args_t *args);
+#endif
 
 
 
@@ -46,6 +53,10 @@ bool ledInit(void)
     ledOff(i);
   }
 
+#ifdef _USE_HW_CLI
+  cliAdd("led", cliLed);
+#endif
+
   return ret;
 }
 
@@ -69,3 +80,48 @@ void ledToggle(uint8_t ch)
 
   HAL_GPIO_TogglePin(led_tbl[ch].port, led_tbl[ch].pin);
 }
+
+
+
+
+
+#ifdef _USE_HW_CLI
+void cliLed(cli_args_t *args)
+{
+  bool ret = false;
+
+
+  if (args->argc == 3 && args->isStr(0, "toggle") == true)
+  {
+    uint8_t  led_ch;
+    uint32_t toggle_time;
+    uint32_t pre_time;
+
+    led_ch      = args->getData(1);
+    toggle_time = args->getData(2);
+
+    if (led_ch > 0)
+    {
+      led_ch--;
+    }
+
+    pre_time = millis();
+    while(cliKeepLoop())
+    {
+      if (millis()-pre_time >= toggle_time)
+      {
+        pre_time = millis();
+        ledToggle(led_ch);
+      }
+    }
+    ret = true;
+  }
+
+
+
+  if (ret != true)
+  {
+    cliPrintf("led toggle ch[1~%d] time(ms)\n", LED_MAX_CH);
+  }
+}
+#endif
