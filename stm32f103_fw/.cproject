@@ -53,6 +53,9 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/lib/cube_f103/Middlewares/ST/STM32_USB_Device_Library/Core/Inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/lib/cube_f103/USB_DEVICE/App}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/lib/cube_f103/USB_DEVICE/Target}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/lib/FreeRTOS/Source/CMSIS_RTOS}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/lib/FreeRTOS/Source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/src/lib/FreeRTOS/Source/portable/GCC/ARM_CM3}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.644241491" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -81,7 +84,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/lib/cube_f103/Core" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/lib/FreeRTOS/Source/portable/MemMang/heap_5.c|src/lib/FreeRTOS/Source/portable/MemMang/heap_3.c|src/lib/FreeRTOS/Source/portable/MemMang/heap_2.c|src/lib/FreeRTOS/Source/portable/MemMang/heap_1.c|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM7_MPU|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM7|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM4F|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM4_MPU|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM3_MPU|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM0|src/lib/FreeRTOS/Source/portable/Tasking|src/lib/FreeRTOS/Source/portable/RVDS|src/lib/FreeRTOS/Source/portable/Keil|src/lib/FreeRTOS/Source/portable/IAR|src/lib/FreeRTOS/Source/portable/Common|src/lib/FreeRTOS/Source/CMSIS_RTOS_V2|src/lib/cube_f103/Core" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -154,7 +157,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/lib/cube_f103/Core" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="src/lib/FreeRTOS/Source/portable/MemMang/heap_5.c|src/lib/FreeRTOS/Source/portable/MemMang/heap_3.c|src/lib/FreeRTOS/Source/portable/MemMang/heap_2.c|src/lib/FreeRTOS/Source/portable/MemMang/heap_1.c|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM7_MPU|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM7|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM4F|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM4_MPU|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM3_MPU|src/lib/FreeRTOS/Source/portable/GCC/ARM_CM0|src/lib/FreeRTOS/Source/portable/Tasking|src/lib/FreeRTOS/Source/portable/RVDS|src/lib/FreeRTOS/Source/portable/Keil|src/lib/FreeRTOS/Source/portable/IAR|src/lib/FreeRTOS/Source/portable/Common|src/lib/FreeRTOS/Source/CMSIS_RTOS_V2|src/lib/cube_f103/Core" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
