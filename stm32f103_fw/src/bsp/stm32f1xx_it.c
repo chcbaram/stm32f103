@@ -170,7 +170,6 @@ void DebugMon_Handler(void)
 /**
   * @brief This function handles Pendable request for system service.
   */
-#if 0
 void PendSV_Handler(void)
 {
   /* USER CODE BEGIN PendSV_IRQn 0 */
@@ -180,7 +179,6 @@ void PendSV_Handler(void)
 
   /* USER CODE END PendSV_IRQn 1 */
 }
-#endif
 
 /**
   * @brief This function handles System tick timer.
@@ -192,7 +190,6 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-  osSystickHandler();
   /* USER CODE END SysTick_IRQn 1 */
 }
 

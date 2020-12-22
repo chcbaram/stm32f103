@@ -14,19 +14,8 @@
 
 
 
-#define _HW_DEF_RTOS_MEM_SIZE(x)              ((x)/4)
 
 
-#define _HW_DEF_RTOS_THREAD_PRI_MAIN          osPriorityNormal
-#define _HW_DEF_RTOS_THREAD_PRI_LED           osPriorityNormal
-
-
-#define _HW_DEF_RTOS_THREAD_MEM_MAIN          _HW_DEF_RTOS_MEM_SIZE( 2*1024)
-#define _HW_DEF_RTOS_THREAD_MEM_LED           _HW_DEF_RTOS_MEM_SIZE(    256)
-
-
-
-#define _USE_HW_RTOS
 #define _USE_HW_USB
 #define _USE_HW_RTC
 #define _USE_HW_RESET
