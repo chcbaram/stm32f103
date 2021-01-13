@@ -21,7 +21,7 @@
 #define _USE_HW_RESET
 #define _USE_HW_CDC
 #define _USE_HW_FLASH
-
+#define _USE_HW_YMODEM
 
 
 #define _USE_HW_LED

@@ -13,16 +13,17 @@
 cmd_t cmd;
 
 
+void cliModem(cli_args_t *args);
+
 
 void apInit(void)
 {
   uartOpen(_DEF_UART1, 57600);  // USB
   uartOpen(_DEF_UART2, 57600);  // UART
 
-  cliOpen(_DEF_UART2, 57600);
+  cliOpen(_DEF_UART1, 57600);
 
-  cmdInit(&cmd);
-  cmdOpen(&cmd, _DEF_UART1, 57600);
+  cliAdd("modem", cliModem);
 }
 
 void apMain(void)
@@ -36,36 +37,76 @@ void apMain(void)
     if (millis()-pre_time >= 500)
     {
       pre_time = millis();
-      //ledToggle(_DEF_LED1);
+      ledToggle(_DEF_LED1);
     }
     cliMain();
+  }
+}
 
-    if (cmdReceivePacket(&cmd) == true)
+void cliModem(cli_args_t *args)
+{
+  bool ret = false;
+  bool keep_loop;
+  ymodem_t ymodem;
+
+
+  if (args->argc == 2 && args->isStr(0, "down"))
+  {
+    uint32_t addr_offset;
+    uint32_t addr;
+
+    addr_offset = args->getData(1);
+
+    keep_loop = true;
+
+    ymodemOpen(&ymodem, _DEF_UART1);
+
+    while(keep_loop)
     {
-      cliPrintf("cmd    0x%X\n", cmd.rx_packet.cmd);
-      cliPrintf("dir    0x%X\n", cmd.rx_packet.dir);
-      cliPrintf("error  0x%X\n", cmd.rx_packet.error);
-      cliPrintf("length 0x%X\n", cmd.rx_packet.length);
-
-      for (int i=0; i<cmd.rx_packet.length; i++)
+      if (ymodemReceive(&ymodem) == true)
       {
-        cliPrintf("data   %02d : 0x%X\n", i, cmd.rx_packet.data[i]);
-      }
-      cliPrintf("\n");
+        switch(ymodem.type)
+        {
+          case YMODEM_TYPE_START:
+            flashErase(addr_offset, ymodem.file_length);
+            break;
 
-      if (cmd.rx_packet.cmd == 0x10)
-      {
-        if (cmd.rx_packet.data[0] == 1)
-        {
-          ledOn(_DEF_LED1);
-        }
-        else
-        {
-          ledOff(_DEF_LED1);
+          case YMODEM_TYPE_DATA:
+            addr = addr_offset + ymodem.file_addr;
+            flashWrite(addr, ymodem.file_buf, ymodem.file_buf_length);
+            break;
+
+          case YMODEM_TYPE_END:
+            keep_loop = false;
+            break;
+
+          case YMODEM_TYPE_CANCEL:
+            keep_loop = false;
+            break;
+
+          case YMODEM_TYPE_ERROR:
+            keep_loop = false;
+            break;
         }
       }
     }
+
+    if (ymodem.type == YMODEM_TYPE_END)
+    {
+      cliPrintf("Down OK\n");
+    }
+    else
+    {
+      cliPrintf("Down Fail\n");
+    }
+    ret = true;
+  }
+
+  if (ret != true)
+  {
+    cliPrintf("modem down [addr] \n");
   }
 }
+
 
 
