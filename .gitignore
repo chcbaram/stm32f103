@@ -2,3 +2,5 @@ stm32f103_boot/.settings/language.settings.xml
 stm32f103_boot/Debug/
 stm32f103_fw/.settings/language.settings.xml
 stm32f103_fw/Debug/
+stm32f103_fw_sd/.settings/language.settings.xml
+stm32f103_fw_sd/Debug/
